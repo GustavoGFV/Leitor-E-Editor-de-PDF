@@ -1,21 +1,21 @@
 ﻿using ConsoleApp1.FillDoc;
-//using ConsoleApp1.FillSignature;
+using ConsoleApp1.EmailSender;
 
 try
 {
     DocFiller filler = new DocFiller();
-    //SignatureFiller signatureFiller = new SignatureFiller();
+    EmailSender emailSender = new EmailSender();
 
     using (MemoryStream ms = new MemoryStream())
     {
-        using (MemoryStream teste = new MemoryStream())
+        using (FileStream file = new FileStream(@"C:\Users\Usuario\Downloads\Arquivo.pdf", FileMode.Open, FileAccess.Read))
         {
-            var testes = filler.DocFillerProcess(ms);
-            //var teste2 = signatureFiller.SignatureFillerProcess(ms);
+            var filledResult = filler.DocFillerProcess(file);
+            emailSender.EmailSenderProcess(filledResult);
         }
     }
 }
 catch (Exception ex)
 {
-    throw;
+    throw ex;
 }

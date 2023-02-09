@@ -16,6 +16,8 @@ using iText.Layout.Element;
 using iText.Layout;
 using System.Data;
 using System.IO;
+using ConsoleApp1.EmailSender;
+using System.Net.Http;
 
 namespace ConsoleApp1.FillDoc
 {
@@ -28,13 +30,17 @@ namespace ConsoleApp1.FillDoc
         private const int SignaturePage = 3;
 
         public DocFiller() { }
-        public MemoryStream DocFillerProcess(MemoryStream ms)
+        public MemoryStream DocFillerProcess(FileStream ms)
         {
             try
             {
+                EmailSender.EmailSender emailSender = new EmailSender.EmailSender();
+
+                MemoryStream outStream = new MemoryStream();
+
                 using (MemoryStream memoryStream = new MemoryStream())
                 {
-                    using (PdfReader pdfReader = new PdfReader(@"C:\Users\Pichau\Downloads\Safrapay-Termo_de_cadastramentoAntigoV2.pdf"))
+                    using (PdfReader pdfReader = new PdfReader(ms))
                     {
                         using (PdfDocument pdfDocument = new PdfDocument(pdfReader, new PdfWriter(memoryStream)))
                         {
@@ -67,19 +73,19 @@ namespace ConsoleApp1.FillDoc
                                 form.FlattenFields();
 
                                 doc.Add(image);
-                                doc.Close();
 
-                                memoryStream.Position = 0;
+                                doc.Close();
                             }
                             pdfDocument.Close();
+
+                            return new MemoryStream(memoryStream.ToArray());
                         }
                     }
-                    return memoryStream;
                 }
             }
             catch (Exception ex)
             {
-                throw;
+                throw ex;
             }
         }
     }
